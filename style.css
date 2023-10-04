@@ -9,4 +9,9 @@ label {
   label {
     margin: 0.4rem 0;
   }
-  
+
+body{
+  font:
+    'Fira Sans',
+    sans-serif;
+}

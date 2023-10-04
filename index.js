@@ -5,7 +5,7 @@ const fileInput = document.getElementById('inputFile');
 fileInput.onchange = () => {
     const selectedFile = fileInput.files[0];
     const selectedURL = URL.createObjectURL(selectedFile);
-    console.log(selectedURL);
+    // console.log(selectedURL);
 
     csv(selectedURL).then((data) => {
         parseRows(data);
@@ -33,8 +33,6 @@ function parseRows(rowData) {
 
         for (const [key, value] of Object.entries(configArray)) {
 
-
-
             let attributeChoice = value;
             if (typeof attributeChoice === "object") {
                 // attributeChoice = 'not chosen';
@@ -47,8 +45,10 @@ function parseRows(rowData) {
                 }
             }
             if (attributeChoice === "") {
-                attributeChoice = 'not chosen';
+                attributeChoice = 'default / not chosen';
             }
+
+            row[key] = attributeChoice;
 
             if (!sessionExists) {
                 if ((key in attributeHeatmap)) {
@@ -60,25 +60,26 @@ function parseRows(rowData) {
                 } else {
                     attributeHeatmap[key] = {}
                 }
+
+                
             }
 
-            if ((key in viewMap)) {
-                if (!(attributeChoice in viewMap[key])) {
-                    viewMap[key][attributeChoice] = 1;
-                } else {
-                    viewMap[key][attributeChoice] += 1;
-                }
-            } else {
+            if (!(key in viewMap)) {
                 viewMap[key] = {}
             }
+            if (!(attributeChoice in viewMap[key])) {
+                viewMap[key][attributeChoice] = 0;
+            }
+            if(sessionInfo[sessionID][key] !== attributeChoice){
+                viewMap[key][attributeChoice] += 1;
+                sessionInfo[sessionID][key] = attributeChoice;
+            }
+
+            
             
         }
 
     });
-
-    console.log(attributeHeatmap);
-
-    showBothCharts("Alcove");
 
     var select = document.getElementById("attributeSelect");
     var options = Object.keys(attributeHeatmap);
@@ -100,7 +101,7 @@ function parseRows(rowData) {
 function showBothCharts(keyName) {
     aChart.data = {
         datasets: [{
-            label: keyName,
+            label: "final configurations",
             data: attributeHeatmap[keyName],
         },
         {
@@ -138,12 +139,8 @@ var aChart = new Chart(ctx, {
     type: 'bar',
     data: {
         datasets: [{
-            label: "option 1",
-            data: { one: 12, two: 19, three: 3, four: 5, five: 2, six: 3 },
-        },
-        {
-            label: "option 2",
-            data: { a: 12, b: 19, c: 3, d: 5, e: 2, f: 3 },
+            label: "data",
+            data: {},
         }],
         options: {
             autopPadding: false,

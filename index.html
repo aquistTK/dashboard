@@ -5,24 +5,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>My Website</title>
+    <title>Analytics dashboard</title>
     <link rel="stylesheet" href="./style.css">
 </head>
 
 <body>
     <main>
         <div>
-            <label for="inputFile">Choose a report file:</label>
+            <label for="inputFile">Choose a configuration change file:</label>
             <input type="file" id="inputFile" name="inputFile" accept=".csv" />
         </div>
         <div>
-            <canvas id="myChart"></canvas>
+            <select id="attributeSelect">
+                <option>Choose an attribute</option>
+            </select>
         </div>
         <div>
-        <select id="attributeSelect">
-            <option>Choose an attribute</option>
-        </select>
+            <canvas id="myChart" class="graph"></canvas>
         </div>
+
     </main>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script type="module" src="index.js"></script>
