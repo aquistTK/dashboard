@@ -20,63 +20,70 @@ const sessionInfo = {}
 function parseRows(rowData) {
 
     rowData.forEach(row => {
+        var configArray = {}
 
-        const configArray = JSON.parse(row['current_configuration']);
+        try {
+            configArray = JSON.parse(row['current_configuration']);
 
-        const sessionID = row['session_id'];
+            const sessionID = row['session_id'];
 
-        let sessionExists = true;
-        if (!(sessionID in sessionInfo)) {
-            sessionExists = false;
-            sessionInfo[sessionID] = {};
-        }
-
-        for (const [key, value] of Object.entries(configArray)) {
-
-            let attributeChoice = value;
-            if (typeof attributeChoice === "object") {
-                // attributeChoice = 'not chosen';
-                if (!('assetId' in attributeChoice)) {
-                    // attributeChoice = JSON.stringify(attributeChoice);
-                    attributeChoice = 'other';
-                }
-                else {
-                    attributeChoice = attributeChoice['assetId'];
-                }
-            }
-            if (attributeChoice === "") {
-                attributeChoice = 'default / not chosen';
+            let sessionExists = true;
+            if (!(sessionID in sessionInfo)) {
+                sessionExists = false;
+                sessionInfo[sessionID] = {};
             }
 
-            row[key] = attributeChoice;
+            for (const [key, value] of Object.entries(configArray)) {
 
-            if (!sessionExists) {
-                if ((key in attributeHeatmap)) {
-                    if (!(attributeChoice in attributeHeatmap[key])) {
-                        attributeHeatmap[key][attributeChoice] = 1;
-                    } else {
-                        attributeHeatmap[key][attributeChoice] += 1;
+                let attributeChoice = value;
+                if (typeof attributeChoice === "object") {
+                    // attributeChoice = 'not chosen';
+                    if (!('assetId' in attributeChoice)) {
+                        // attributeChoice = JSON.stringify(attributeChoice);
+                        attributeChoice = 'other';
                     }
-                } else {
-                    attributeHeatmap[key] = {}
+                    else {
+                        attributeChoice = attributeChoice['assetId'];
+                    }
+                }
+                if (attributeChoice === "") {
+                    attributeChoice = 'default / not chosen';
                 }
 
-                
+                row[key] = attributeChoice;
+
+                if (!sessionExists) {
+                    if ((key in attributeHeatmap)) {
+                        if (!(attributeChoice in attributeHeatmap[key])) {
+                            attributeHeatmap[key][attributeChoice] = 1;
+                        } else {
+                            attributeHeatmap[key][attributeChoice] += 1;
+                        }
+                    } else {
+                        attributeHeatmap[key] = {}
+                    }
+
+
+                }
+
+                if (!(key in viewMap)) {
+                    viewMap[key] = {}
+                }
+                if (!(attributeChoice in viewMap[key])) {
+                    viewMap[key][attributeChoice] = 0;
+                }
+                if (sessionInfo[sessionID][key] !== attributeChoice) {
+                    viewMap[key][attributeChoice] += 1;
+                    sessionInfo[sessionID][key] = attributeChoice;
+                }
+
+
+
             }
 
-            if (!(key in viewMap)) {
-                viewMap[key] = {}
-            }
-            if (!(attributeChoice in viewMap[key])) {
-                viewMap[key][attributeChoice] = 0;
-            }
-            if(sessionInfo[sessionID][key] !== attributeChoice){
-                viewMap[key][attributeChoice] += 1;
-                sessionInfo[sessionID][key] = attributeChoice;
-            }
 
-            
-            
+        } catch (e) {
+            console.log(row);
         }
 
     });
@@ -84,7 +91,7 @@ function parseRows(rowData) {
     var select = document.getElementById("attributeSelect");
     var options = Object.keys(attributeHeatmap);
 
-    for(var i = 0; i < options.length; i++) {
+    for (var i = 0; i < options.length; i++) {
         var opt = options[i];
         var el = document.createElement("option");
         el.textContent = opt;
@@ -92,9 +99,9 @@ function parseRows(rowData) {
         select.appendChild(el);
     }
 
-    select.addEventListener('change', function() {
+    select.addEventListener('change', function () {
         showBothCharts(this.value);
-      });
+    });
 }
 
 
