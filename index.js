@@ -103,7 +103,7 @@ function parseRows(rowData) {
         showBothCharts(this.value);
     });
 
-    window.andrew = [attributeHeatmap,viewMap,sessionInfo];
+    window["heatmap"] = [attributeHeatmap,viewMap,sessionInfo];
 }
 
 
