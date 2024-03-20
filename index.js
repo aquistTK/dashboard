@@ -102,6 +102,8 @@ function parseRows(rowData) {
     select.addEventListener('change', function () {
         showBothCharts(this.value);
     });
+
+    window.andrew = [attributeHeatmap,viewMap,sessionInfo];
 }
 
 
